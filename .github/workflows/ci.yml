@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+env:
+  DISABLE_AUTOUPDATER: "1"
+  CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: "1"
+
+jobs:
+  plugins:
+    name: Validate and test plugins
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+      - name: Install the pinned Claude Code
+        run: |
+          npm ci --no-audit --no-fund --prefix .github/ci
+          echo "$PWD/.github/ci/node_modules/.bin" >> "$GITHUB_PATH"
+      - name: Validate the marketplace and each plugin
+        run: |
+          claude plugin validate --strict .
+          for p in plugins/*/; do claude plugin validate --strict "${p%/}"; done
+      - name: Run plugin tests
+        run: |
+          for p in plugins/*/; do
+            if [ -d "${p}tests" ]; then claude plugin test "${p%/}"; fi
+          done
+
+  leak-check:
+    name: Leak check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+      # A pull request is checked by the base branch's checker and allow list, so it can't weaken its own check.
+      - name: Paths, emails and secrets
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.sha }}
+        run: |
+          git show "$BASE_SHA:.github/scripts/leak-check.mjs" > "$RUNNER_TEMP/leak-check.mjs"
+          git show "$BASE_SHA:.github/leak-allow.json" > "$RUNNER_TEMP/leak-allow.json"
+          node "$RUNNER_TEMP/leak-check.mjs" --allow "$RUNNER_TEMP/leak-allow.json"

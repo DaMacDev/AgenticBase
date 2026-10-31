@@ -1,0 +1,8 @@
+{
+  "name": "agenticbase-ci",
+  "private": true,
+  "description": "Pinned tools for this repo's CI.",
+  "devDependencies": {
+    "@anthropic-ai/claude-code": "2.1.316"
+  }
+}

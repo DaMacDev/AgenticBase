@@ -1,0 +1,17 @@
+{
+  "name": "guard-hooks",
+  "version": "0.1.0",
+  "description": "Four safety hooks: block destructive shell commands, hardcoded secrets and permission-bypass flags, and check WebFetch URLs against an allowlist.",
+  "author": {
+    "name": "DaMacDev"
+  },
+  "homepage": "https://github.com/DaMacDev/AgenticBase",
+  "repository": "https://github.com/DaMacDev/AgenticBase",
+  "license": "MIT",
+  "keywords": [
+    "hooks",
+    "safety",
+    "guardrails",
+    "secrets"
+  ]
+}

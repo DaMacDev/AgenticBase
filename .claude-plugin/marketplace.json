@@ -1,0 +1,21 @@
+{
+  "name": "agenticbase",
+  "owner": {
+    "name": "DaMacDev"
+  },
+  "description": "Claude Code plugins by DaMacDev: a usage-meter mod and a set of safety hooks.",
+  "plugins": [
+    {
+      "name": "usage-meter",
+      "source": "./plugins/usage-meter",
+      "description": "Live gauges above the prompt for context fill, the 5-hour and weekly plan limits (with pace and reset time), plus zero-token /clear vs /compact hints.",
+      "category": "mod"
+    },
+    {
+      "name": "guard-hooks",
+      "source": "./plugins/guard-hooks",
+      "description": "Four safety hooks: block destructive shell commands, hardcoded secrets and permission-bypass flags, and check WebFetch URLs against an allowlist.",
+      "category": "hooks"
+    }
+  ]
+}

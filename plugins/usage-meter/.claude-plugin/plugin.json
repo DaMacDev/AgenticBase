@@ -1,0 +1,18 @@
+{
+  "name": "usage-meter",
+  "version": "0.1.0",
+  "description": "Live gauges above the prompt for context fill, the 5-hour and weekly plan limits (with pace and reset time), plus zero-token /clear vs /compact hints.",
+  "types": "./types/index.d.ts",
+  "author": {
+    "name": "DaMacDev"
+  },
+  "homepage": "https://github.com/DaMacDev/AgenticBase",
+  "repository": "https://github.com/DaMacDev/AgenticBase",
+  "license": "MIT",
+  "keywords": [
+    "usage",
+    "context",
+    "rate-limits",
+    "statusline"
+  ]
+}

@@ -1,6 +1,8 @@
 import { expect, mock, test } from 'claude-code/testing'
 import type { On, SessionUsage } from 'claude-code'
 
+import { pace } from '../hooks/logic'
+
 const NOW = Date.UTC(2026, 9, 31, 12, 0)
 const MIN = 60_000
 
@@ -22,16 +24,14 @@ const BAND = (surface: 'terminal' | 'desktop', isWorking = false) =>
 const engine = (on: On, usage: SessionUsage) => {
   const clock = mock.clock(on, { now: NOW })
   mock.store(on)
-  const statuses: (string | undefined)[] = []
   const toasts: string[] = []
   on('session.start', (_, e) => ({ cwd: e.cwd }))
   on('session.usage', () => ({ value: usage }))
   on('session.measure', (_, e) => ({ changed: e.changed }))
-  on('ui.status', (_, e) => (statuses.push(e.text), { value: undefined }))
   on('ui.toast', (_, e) => (toasts.push(e.text), { value: undefined }))
   on('prompt.submit', (_, e) => ({ text: e.text }) as never)
   on('tool.call', () => ({ result: {} }) as never)
-  return { clock, statuses, toasts }
+  return { clock, toasts }
 }
 
 const usage = (over: Partial<SessionUsage> = {}): SessionUsage => ({
@@ -95,8 +95,8 @@ for (const surface of ['terminal', 'desktop'] as const) {
   })
 }
 
-test('status line shows only the worst metric, and 90% raises one toast', async ($, on) => {
-  const { statuses, toasts } = engine(
+test('a limit crossing 90% raises one toast per window', async ($, on) => {
+  const { toasts } = engine(
     on,
     usage({
       context: { tokens: 20_000, window: 200_000, percent: 10 },
@@ -107,7 +107,6 @@ test('status line shows only the worst metric, and 90% raises one toast', async 
     }),
   )
   await start($, 'terminal')
-  expect(statuses.at(-1)).toBe('5h 92% ↻40m ⚠')
   expect(toasts).toEqual(['5h limit at 92%, resets in 40m'])
 
   // A second measurement in the same window does not toast again.
@@ -123,7 +122,6 @@ test('before the first reply: last-seen limits are shown dimmed', async ($, on) 
   on('session.usage', () => ({
     value: { startedAt: NOW, context: { window: 200_000 }, rateLimits: [] },
   }))
-  on('ui.status', () => ({ value: undefined }))
   await start($, 'desktop')
   const ui = await $.ui.mount(BAND('desktop'))
 
@@ -139,4 +137,12 @@ test('the clock tick moves the countdown without a turn', async ($, on) => {
   const ui = await $.ui.mount(BAND('terminal'))
   expect(await ui.find({ type: 'Text', text: /5h.*resets 1h30m/ })).toBeTruthy()
   await ui.unmount()
+})
+
+test('a few points over elapsed time near the reset is ahead of pace', async () => {
+  // 95% used with 13h15m of the week left: at this rate it runs out about 5h early.
+  const p = pace({ kind: 'seven_day', percentUsed: 95, resetsAt: NOW + (13 * 60 + 15) * MIN }, NOW)
+  expect(p.status).toBe('ahead')
+  expect(p.runsOutEarlyMs! / (60 * MIN)).toBeGreaterThan(5)
+  expect(p.runsOutEarlyMs! / (60 * MIN)).toBeLessThan(5.2)
 })

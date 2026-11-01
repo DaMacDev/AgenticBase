@@ -13,7 +13,6 @@ import {
   pace,
   resetLabel,
   tokens,
-  worst,
   type Level,
 } from './logic'
 
@@ -53,7 +52,7 @@ async function readAutoCompact($: EngineInterface): Promise<number | null> {
   }
 }
 
-/** Folds a usage reading into the snapshot the band and status line draw from. */
+/** Folds a usage reading into the snapshot the band draws from. */
 async function record(
   $: EngineInterface,
   usage: Pick<SessionUsage, 'context' | 'rateLimits'>,
@@ -85,7 +84,6 @@ async function record(
   }
   await update($, snapshot, () => next)
   await update($, now, () => t)
-  $.ui.status(worst(next, t))
   if (!isStale) await alertPast90($, fresh)
 }
 
@@ -117,7 +115,6 @@ export const register: Register = on => {
       void (async () => {
         const t = await $.clock.now()
         await update($, now, () => t)
-        $.ui.status(worst(await read($, snapshot), t))
       })()
     })
     return result

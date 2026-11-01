@@ -27,8 +27,6 @@ export const CONTEXT_ACT = 75
 export const LIMIT_WATCH = 70
 export const LIMIT_ACT = 90
 
-/** Usage may run this many points ahead of elapsed time before it counts as "ahead". */
-export const PACE_SLACK = 5
 
 /** No prompt for this long counts as idle (also when the prompt cache has expired). */
 export const IDLE_MS = 30 * MINUTE
@@ -90,12 +88,12 @@ export const pace = (limit: Limit, now: number): Pace => {
   const untilFullMs = rate > 0 ? (100 - used) / rate : Infinity
   const runsOutEarlyMs =
     untilFullMs < resetInMs ? Math.round(resetInMs - untilFullMs) : null
-  const isAhead = used > elapsedPercent + PACE_SLACK
+  const isAhead = runsOutEarlyMs !== null
 
   return {
     elapsedPercent,
     resetInMs,
-    runsOutEarlyMs: isAhead ? runsOutEarlyMs : null,
+    runsOutEarlyMs,
     status: isAhead ? 'ahead' : 'under',
     level:
       used >= LIMIT_ACT
@@ -208,38 +206,6 @@ export const advise = (
     }
   }
   return null
-}
-
-const RANK: Record<Level, number> = { ok: 0, watch: 1, act: 2 }
-
-/** The status line entry: only the metric closest to trouble. */
-export const worst = (snapshot: Snapshot | null, now: number): string | undefined => {
-  if (snapshot === null) return undefined
-  type Entry = { text: string; level: Level; percent: number }
-  const entries: Entry[] = []
-
-  if (snapshot.percent !== null) {
-    const level = contextLevel(snapshot.percent)
-    entries.push({ text: `ctx ${snapshot.percent}%`, level, percent: snapshot.percent })
-  }
-  if (!snapshot.isStale) {
-    for (const limit of snapshot.limits) {
-      const p = pace(limit, now)
-      const label = LABEL[limit.kind] === 'Week' ? 'wk' : LABEL[limit.kind] ?? limit.kind
-      const reset = limit.resetsAt === null ? '' : ` ↻${resetLabel(limit.resetsAt, now)}`
-      entries.push({
-        text: `${label} ${Math.round(limit.percentUsed)}%${reset}`,
-        level: p.level,
-        percent: limit.percentUsed,
-      })
-    }
-  }
-  if (entries.length === 0) return undefined
-
-  entries.sort((a, b) => RANK[b.level] - RANK[a.level] || b.percent - a.percent)
-  const top = entries[0]!
-  const mark = top.level === 'act' ? ' ⚠' : top.level === 'watch' ? ' ·' : ''
-  return `${top.text}${mark}`
 }
 
 /** Pick the bar width from the cells the band has. */

@@ -24,8 +24,6 @@ Pace verdicts: `✓ under pace`, `▲ ahead of pace, out ~1h20m early` (at this 
 
 Limit bars go yellow past 70% or when ahead of pace, red past 90%. Crossing 90% on a limit raises one toast per window.
 
-The **status line** shows only the metric closest to trouble, e.g. `5h 92% ↻40m ⚠` or `ctx 78% ⚠`.
-
 ## The /clear vs /compact hints
 
 Plain rules, no AI involved:
@@ -40,7 +38,7 @@ Reminder: `/clear` starts fresh (the old conversation stays available via `/resu
 
 ## Cost
 
-Zero tokens. The mod only reads figures Claude Code already has (the same ones the status line uses) and never calls a model or adds to the prompt.
+Zero tokens. The mod only reads figures Claude Code already has and never calls a model or adds to the prompt.
 
 ## Notes
 

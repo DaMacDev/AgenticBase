@@ -1,6 +1,6 @@
 {
   "name": "review-agents",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Two read-only review agents: a pre-merge code reviewer and a security and privacy reviewer.",
   "author": {
     "name": "DaMacDev"

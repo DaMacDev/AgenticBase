@@ -1,5 +1,4 @@
 {
   "allow": [
-    { "rule": "abs-path", "file": "plugins/guard-hooks/hooks/scripts/block-destructive.sh", "lineSha256": "ca8abb2d58bf712438c8b2fe446b0b072fd8188f72a0cbd4bfc263a4524533e6", "why": "regex of protected Windows roots, not a local path" }
   ]
 }

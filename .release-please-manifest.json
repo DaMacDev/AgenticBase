@@ -1,4 +1,7 @@
 {
+  "plugins/web-qa": "0.1.0",
+  "plugins/review-agents": "0.1.0",
+  "plugins/repo-review": "0.1.0",
   "plugins/model-fit": "0.2.0",
   "plugins/usage-meter": "0.2.1",
   "plugins/guard-hooks": "0.1.1"

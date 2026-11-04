@@ -3,7 +3,7 @@
   "owner": {
     "name": "DaMacDev"
   },
-  "description": "Claude Code plugins by DaMacDev: mods, hooks and more.",
+  "description": "Claude Code plugins by DaMacDev: mods, hooks, skills and agents.",
   "plugins": [
     {
       "name": "usage-meter",
@@ -14,7 +14,7 @@
     {
       "name": "guard-hooks",
       "source": "./plugins/guard-hooks",
-      "description": "Four safety hooks: block destructive shell commands, hardcoded secrets and permission-bypass flags, and check WebFetch URLs against an allowlist.",
+      "description": "Six safety hooks: block destructive shell commands, hardcoded secrets, permission-bypass flags and commits that do not type-check, check WebFetch URLs against an allowlist, and warn when a session starts in the home folder.",
       "category": "hooks"
     },
     {
@@ -22,6 +22,24 @@
       "source": "./plugins/model-fit",
       "description": "Shows the model and effort in use above the prompt, with a suggested model and effort for the task at hand.",
       "category": "mod"
+    },
+    {
+      "name": "web-qa",
+      "source": "./plugins/web-qa",
+      "description": "Three skills for web UI testing: set up Playwright with a phone and desktop matrix and accessibility checks, fuzz forms with adversarial input, and test a flaky or offline network.",
+      "category": "skills"
+    },
+    {
+      "name": "review-agents",
+      "source": "./plugins/review-agents",
+      "description": "Two read-only review agents: a pre-merge code reviewer and a security and privacy reviewer.",
+      "category": "agents"
+    },
+    {
+      "name": "repo-review",
+      "source": "./plugins/repo-review",
+      "description": "Review a whole repository and record every real issue as a numbered report with evidence and a fix plan; a later run works through the open findings.",
+      "category": "skills"
     }
   ]
 }

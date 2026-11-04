@@ -8,6 +8,11 @@
             "type": "command",
             "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/scripts/block-destructive.sh\"",
             "timeout": 5
+          },
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/scripts/typecheck-before-commit.sh\"",
+            "timeout": 120
           }
         ]
       },
@@ -42,6 +47,17 @@
           {
             "type": "command",
             "command": "SANDBOX_WEBFETCH_MODE=interactive bash \"${CLAUDE_PLUGIN_ROOT}/hooks/scripts/sandbox-webfetch.sh\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/scripts/warn-home-dir.sh\"",
             "timeout": 5
           }
         ]

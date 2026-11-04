@@ -1,7 +1,7 @@
 {
   "name": "guard-hooks",
   "version": "0.1.1",
-  "description": "Four safety hooks: block destructive shell commands, hardcoded secrets and permission-bypass flags, and check WebFetch URLs against an allowlist.",
+  "description": "Six safety hooks: block destructive shell commands, hardcoded secrets, permission-bypass flags and commits that do not type-check, check WebFetch URLs against an allowlist, and warn when a session starts in the home folder.",
   "author": {
     "name": "DaMacDev"
   },

@@ -1,7 +1,7 @@
 import { expect, mock, test } from 'claude-code/testing'
 import type { On, SessionUsage } from 'claude-code'
 
-import { pace } from '../hooks/logic'
+import { pace, resetLabel } from '../hooks/logic'
 
 const NOW = Date.UTC(2026, 9, 31, 12, 0)
 const MIN = 60_000
@@ -29,6 +29,11 @@ const engine = (on: On, usage: SessionUsage) => {
   on('session.usage', () => ({ value: usage }))
   on('session.measure', (_, e) => ({ changed: e.changed }))
   on('ui.toast', (_, e) => (toasts.push(e.text), { value: undefined }))
+  // The band beneath the mod: another mod's row.
+  on('ui.render', ($, e) => {
+    const { Text } = $.ui.resolve(e)
+    return <Text>below-row</Text>
+  })
   on('prompt.submit', (_, e) => ({ text: e.text }) as never)
   on('tool.call', () => ({ result: {} }) as never)
   return { clock, toasts }
@@ -60,6 +65,8 @@ for (const surface of ['terminal', 'desktop'] as const) {
     expect((await ui.find({ type: 'Text', text: /Week.*22%.*resets/ }))).toBeTruthy()
     // 68% context, nothing done/idle: no advice yet
     expect(await ui.find({ type: 'Text', text: /💡/ })).toBeFalsy()
+    // Another mod's band row beneath is kept.
+    expect(await ui.find({ type: 'Text', text: /below-row/ })).toBeTruthy()
     await ui.unmount()
   })
 
@@ -122,6 +129,10 @@ test('before the first reply: last-seen limits are shown dimmed', async ($, on) 
   on('session.usage', () => ({
     value: { startedAt: NOW, context: { window: 200_000 }, rateLimits: [] },
   }))
+  on('ui.render', ($, e) => {
+    const { Box } = $.ui.resolve(e)
+    return <Box />
+  })
   await start($, 'desktop')
   const ui = await $.ui.mount(BAND('desktop'))
 
@@ -140,9 +151,25 @@ test('the clock tick moves the countdown without a turn', async ($, on) => {
 })
 
 test('a few points over elapsed time near the reset is ahead of pace', async () => {
-  // 95% used with 13h15m of the week left: at this rate it runs out about 5h early.
+  // 95% used with 13h15m of the week left: at this rate it runs out in about 8h10m.
   const p = pace({ kind: 'seven_day', percentUsed: 95, resetsAt: NOW + (13 * 60 + 15) * MIN }, NOW)
   expect(p.status).toBe('ahead')
-  expect(p.runsOutEarlyMs! / (60 * MIN)).toBeGreaterThan(5)
-  expect(p.runsOutEarlyMs! / (60 * MIN)).toBeLessThan(5.2)
+  expect(p.runsOutInMs! / (60 * MIN)).toBeGreaterThan(8)
+  expect(p.runsOutInMs! / (60 * MIN)).toBeLessThan(8.3)
+})
+
+test('early in the week the run-out shows when 100% is hit, not the gap before the reset', async ($, on) => {
+  // 3h30m into the week, 3% used: 100% in ~113h (the old label printed now + the ~51h gap).
+  const resetsAt = NOW + (7 * 24 * 60 - 210) * MIN
+  const p = pace({ kind: 'seven_day', percentUsed: 3, resetsAt }, NOW)
+  expect(p.status).toBe('ahead')
+  expect(p.runsOutInMs! / (60 * MIN)).toBeGreaterThan(113)
+  expect(p.runsOutInMs! / (60 * MIN)).toBeLessThan(114)
+
+  engine(on, usage({ rateLimits: [{ kind: 'seven_day', percentUsed: 3, resetsAt: new Date(resetsAt).toISOString() }] }))
+  await start($, 'terminal')
+  const ui = await $.ui.mount(BAND('terminal'))
+  expect(await ui.find({ type: 'Text', text: new RegExp(`out ~${resetLabel(NOW + p.runsOutInMs!, NOW)}$`) })).toBeTruthy()
+  expect(await ui.find({ type: 'Text', text: /early/ })).toBeFalsy()
+  await ui.unmount()
 })

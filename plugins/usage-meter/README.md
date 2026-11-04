@@ -20,7 +20,7 @@ Works in the terminal (`claude`) and in the desktop app's **Code** tab.
 | **Week** | The same for the 7-day limit. |
 | **💡** | A hint, only when useful (see below). |
 
-Pace verdicts: `✓ under pace`, `▲ ahead of pace, out ~1h20m early` (at this rate you hit 100% before the reset), `✖ limit reached`.
+Pace verdicts: `✓ under pace`, `▲ ahead of pace, out ~1h20m` or `out ~Fri 08:00` (when you hit 100% at this rate, before the reset), `✖ limit reached`.
 
 Limit bars go yellow past 70% or when ahead of pace, red past 90%. Crossing 90% on a limit raises one toast per window.
 

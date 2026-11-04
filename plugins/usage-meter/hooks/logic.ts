@@ -48,8 +48,8 @@ export type Pace = {
   elapsedPercent: number | null
   /** Milliseconds until reset; null when unknown. */
   resetInMs: number | null
-  /** How much earlier than the reset usage hits 100% at the current rate; null when it does not. */
-  runsOutEarlyMs: number | null
+  /** Milliseconds until usage hits 100% at the current rate, when that comes before the reset; else null. */
+  runsOutInMs: number | null
   status: 'under' | 'ahead' | 'over' | 'unknown'
   level: Level
 }
@@ -64,7 +64,7 @@ export const pace = (limit: Limit, now: number): Pace => {
     return {
       elapsedPercent: elapsedOf(length, resetInMs),
       resetInMs,
-      runsOutEarlyMs: null,
+      runsOutInMs: null,
       status: 'over',
       level: 'act',
     }
@@ -76,7 +76,7 @@ export const pace = (limit: Limit, now: number): Pace => {
     return {
       elapsedPercent,
       resetInMs,
-      runsOutEarlyMs: null,
+      runsOutInMs: null,
       status: 'unknown',
       level: used >= LIMIT_ACT ? 'act' : used >= LIMIT_WATCH ? 'watch' : 'ok',
     }
@@ -86,14 +86,13 @@ export const pace = (limit: Limit, now: number): Pace => {
   // Rate so far, in percent per millisecond; project when it reaches 100%.
   const rate = elapsedMs > 0 ? used / elapsedMs : 0
   const untilFullMs = rate > 0 ? (100 - used) / rate : Infinity
-  const runsOutEarlyMs =
-    untilFullMs < resetInMs ? Math.round(resetInMs - untilFullMs) : null
-  const isAhead = runsOutEarlyMs !== null
+  const runsOutInMs = untilFullMs < resetInMs ? Math.round(untilFullMs) : null
+  const isAhead = runsOutInMs !== null
 
   return {
     elapsedPercent,
     resetInMs,
-    runsOutEarlyMs,
+    runsOutInMs,
     status: isAhead ? 'ahead' : 'under',
     level:
       used >= LIMIT_ACT

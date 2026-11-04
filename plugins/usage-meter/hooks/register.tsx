@@ -227,7 +227,7 @@ export const register: Register = on => {
             : p.status === 'over'
               ? <Text color="error">{'  ✖ limit reached'}</Text>
               : p.status === 'ahead'
-                ? <Text color={COLOR[p.level]}>{`  ▲ ahead of pace${p.runsOutEarlyMs !== null ? `, out ~${resetLabel(t + p.runsOutEarlyMs, t)} early` : ''}`}</Text>
+                ? <Text color={COLOR[p.level]}>{`  ▲ ahead of pace${p.runsOutInMs !== null ? `, out ~${resetLabel(t + p.runsOutInMs, t)}` : ''}`}</Text>
                 : p.status === 'under'
                   ? <Text color={COLOR[p.level]}>{'  ✓ under pace'}</Text>
                   : null
@@ -248,6 +248,8 @@ export const register: Register = on => {
       })
 
     const tip = advise(s, a, t, e.props.isWorking)
+    // Other mods' band rows sit beneath this one in the chain: keep them.
+    const below = await next(e)
 
     return (
       <Box flexDirection="column">
@@ -258,6 +260,7 @@ export const register: Register = on => {
             {`💡 ${tip.text}`}
           </Text>
         ) : null}
+        {below}
       </Box>
     )
   })

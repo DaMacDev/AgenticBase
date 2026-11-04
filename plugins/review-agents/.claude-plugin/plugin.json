@@ -1,0 +1,17 @@
+{
+  "name": "review-agents",
+  "version": "0.1.0",
+  "description": "Two read-only review agents: a pre-merge code reviewer and a security and privacy reviewer.",
+  "author": {
+    "name": "DaMacDev"
+  },
+  "homepage": "https://github.com/DaMacDev/AgenticBase",
+  "repository": "https://github.com/DaMacDev/AgenticBase",
+  "license": "MIT",
+  "keywords": [
+    "agents",
+    "code-review",
+    "security",
+    "privacy"
+  ]
+}

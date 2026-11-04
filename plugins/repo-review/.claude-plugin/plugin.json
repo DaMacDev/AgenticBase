@@ -1,0 +1,16 @@
+{
+  "name": "repo-review",
+  "version": "0.1.0",
+  "description": "Review a whole repository and record every real issue as a numbered report with evidence and a fix plan; a later run works through the open findings.",
+  "author": {
+    "name": "DaMacDev"
+  },
+  "homepage": "https://github.com/DaMacDev/AgenticBase",
+  "repository": "https://github.com/DaMacDev/AgenticBase",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "code-review",
+    "audit"
+  ]
+}

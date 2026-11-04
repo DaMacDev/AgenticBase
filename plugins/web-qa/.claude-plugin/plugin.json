@@ -1,6 +1,6 @@
 {
   "name": "web-qa",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Three skills for web UI testing: set up Playwright with a phone and desktop matrix and accessibility checks, fuzz forms with adversarial input, and test a flaky or offline network.",
   "author": {
     "name": "DaMacDev"

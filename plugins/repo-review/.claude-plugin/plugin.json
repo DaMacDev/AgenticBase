@@ -1,6 +1,6 @@
 {
   "name": "repo-review",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Review a whole repository and record every real issue as a numbered report with evidence and a fix plan; a later run works through the open findings.",
   "author": {
     "name": "DaMacDev"

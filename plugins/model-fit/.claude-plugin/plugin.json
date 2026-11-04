@@ -1,6 +1,6 @@
 {
   "name": "model-fit",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Shows the model and effort in use above the prompt, with a suggested model and effort for the task at hand.",
   "types": "./types/index.d.ts",
   "author": {

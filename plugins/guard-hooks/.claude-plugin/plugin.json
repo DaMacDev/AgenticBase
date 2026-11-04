@@ -1,6 +1,6 @@
 {
   "name": "guard-hooks",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Four safety hooks: block destructive shell commands, hardcoded secrets and permission-bypass flags, and check WebFetch URLs against an allowlist.",
   "author": {
     "name": "DaMacDev"
